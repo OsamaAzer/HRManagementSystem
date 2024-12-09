@@ -26,7 +26,7 @@ namespace HRManagementSystem.Controllers
         {
             var attendances = await unitOfWork.Attendences.Find();
 
-            if (attendances is null)
+            if (attendances.Count() == 0)
                 return NotFound("No attendances found!");
 
             return Ok(attendances);
@@ -44,13 +44,13 @@ namespace HRManagementSystem.Controllers
             return Ok(attendance);
         }
 
-        [HttpPut]
+        [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAsync(int id, [FromBody] AttendanceDTO dto)
         {
             var attendance = await unitOfWork.Attendences.GetById(id);
 
             if (attendance is null)
-                return NotFound($"There is no employee with ID: {id}");
+                return NotFound($"There is no attendance with ID: {id}");
 
             attendance.ArrivingTime = dto.ArrivingTime;
             attendance.LeavingTime = dto.LeavingTime;
@@ -68,13 +68,13 @@ namespace HRManagementSystem.Controllers
             return Ok(attendance);
         }
 
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteDepartment(int id)
         {
             var attendance = await unitOfWork.Attendences.GetById(id);
 
             if (attendance is null)
-                return NotFound($"The employee doesn't exist!!!");
+                return NotFound($"The attendance doesn't exist!!!");
 
             unitOfWork.Attendences.Delete(attendance);
 

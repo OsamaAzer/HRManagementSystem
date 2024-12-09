@@ -26,7 +26,7 @@ namespace HRManagementSystem.Controllers
         {
             var departments = await unitOfWork.Departments.Find();
 
-            if (departments is null)
+            if (departments.Count() == 0)
                 return NotFound("No departments found!");
 
             return Ok(departments);

@@ -24,9 +24,9 @@ namespace HRManagementSystem.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllAsync()
         {
-            var employees = await unitOfWork.Employees.Find(["Department"/*, "SpecialLeave", "OfficialHoliday", "Attendance"*/]);
+            var employees = await unitOfWork.Employees.Find(["Department"]);
 
-            if (employees is null)
+            if (employees.Count() == 0)
                 return NotFound("No employees found!");
 
             return Ok(employees);

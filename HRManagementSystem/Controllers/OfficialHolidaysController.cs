@@ -26,7 +26,7 @@ namespace HRManagementSystem.Controllers
         {
             var holiday = await unitOfWork.OfficialHolidays.Find();
 
-            if (holiday is null)
+            if (holiday.Count() == 0)
                 return NotFound("No holidays found!");
 
             return Ok(holiday);
@@ -39,7 +39,7 @@ namespace HRManagementSystem.Controllers
                 return BadRequest("Holiday data is required.");
 
             var holiday = dto.Adapt<OfficialHoliday>();
-
+            //OfficialHoliday holiday = dto.Adapt(holiday);
             await unitOfWork.OfficialHolidays.Add(holiday);
 
             unitOfWork.Complete();
@@ -50,14 +50,15 @@ namespace HRManagementSystem.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAsync(int id, [FromBody] OfficialHolidayDTO dto)
         {
-            var holiday = await unitOfWork.OfficialHolidays.GetById(id);
+            OfficialHoliday holiday = await unitOfWork.OfficialHolidays.GetById(id);
 
             if (holiday is null)
                 return NotFound($"There is no holiday with ID: {id}");
 
-            holiday.Name = dto.Name;
-            holiday.DayOfWeek = dto.DayOfWeek;
-            holiday.Date = dto.Date;
+            holiday = holiday.Adapt(holiday);
+            //holiday.Name = dto.Name;
+            //holiday.DayOfWeek = dto.DayOfWeek;
+            //holiday.Date = dto.Date;
 
             unitOfWork.OfficialHolidays.Update(holiday);
 
