@@ -24,12 +24,16 @@ namespace HRManagementSystem.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllAsync()
         {
-            var specialLeave = await unitOfWork.SpecialLeaves.Find();
+            var specialLeaves = await unitOfWork.SpecialLeaves.Find();
 
-            if (specialLeave.Count() == 0)
+            if (specialLeaves.Count() == 0)
                 return NotFound("No Special Leaves found!");
 
-            return Ok(specialLeave);
+            IEnumerable<SpecialLeaveDTO> specialLeavesDto = new List<SpecialLeaveDTO>();
+
+            specialLeavesDto = specialLeaves.Adapt(specialLeavesDto);
+
+            return Ok(specialLeavesDto);
         }
 
         [HttpPost]
@@ -55,9 +59,7 @@ namespace HRManagementSystem.Controllers
             if (specialLeave is null)
                 return NotFound($"There is no Special Leave with ID: {id}");
 
-            specialLeave.Name = dto.Name;
-            specialLeave.DayOfWeek = dto.DayOfWeek;
-            specialLeave.Date = dto.Date;
+            specialLeave = dto.Adapt(specialLeave);
 
             unitOfWork.SpecialLeaves.Update(specialLeave);
 

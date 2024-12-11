@@ -30,8 +30,6 @@ namespace RepositoryPatternWithUOW.Core.Models
 
         public virtual ICollection<Attendance> Attendances { get; set; } = new List<Attendance>();
 
-        public virtual ICollection<OfficialHoliday> OfficialHolidays { get; set; } = new List<OfficialHoliday>();
-
         public virtual ICollection<SpecialLeave> SpecialLeaves { get; set; } = new List<SpecialLeave>();
     }
 }

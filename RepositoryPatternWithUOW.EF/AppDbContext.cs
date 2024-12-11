@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using RepositoryPatternWithUOW.Core.Enums;
 using RepositoryPatternWithUOW.Core.Models;
 
 namespace RepositoryPatternWithUOW.EF
@@ -18,19 +19,23 @@ namespace RepositoryPatternWithUOW.EF
 
         public DbSet<SpecialLeave> SpecialLeaves { get; set; }
 
-        //protected override void OnModelCreating(ModelBuilder modelBuilder)
-        //{
-        //    base.OnModelCreating(modelBuilder);
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
 
-        //    modelBuilder.Entity<Employee>().Property("Gender").HasConversion<String>();
+            modelBuilder.Entity<Employee>()
+                .Property(e => e.Gender)
+                .HasConversion(
+                    v => v.ToString(),
+                    v => (Gender)Enum.Parse(typeof(Gender), v)
+                );
 
-        //    modelBuilder.Entity<SpecialLeave>().Property("DayOfWeek").HasConversion<String>();
-
-        //    modelBuilder.Entity<OfficialHoliday>().Property("DayOfWeek").HasConversion<String>();
-
-        //    modelBuilder.Entity<Attendance>().Property("AttendanceStatus").HasConversion<String>();
-
-        //    modelBuilder.Entity<Attendance>().Property("DayOfWeek").HasConversion<String>();
-        //}
+            modelBuilder.Entity<Attendance>()
+                .Property(a => a.Status)
+                .HasConversion(
+                    v => v.ToString(), // Enum to string for database storage
+                    v => (AttendanceStatus)Enum.Parse(typeof(AttendanceStatus), v) // String to enum for entity
+                );
+        }
     }
 }

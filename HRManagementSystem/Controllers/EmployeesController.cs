@@ -29,7 +29,11 @@ namespace HRManagementSystem.Controllers
             if (employees.Count() == 0)
                 return NotFound("No employees found!");
 
-            return Ok(employees);
+            IEnumerable<EmployeeDTO> employeesDto = new List<EmployeeDTO>();
+
+            employeesDto = employees.Adapt(employeesDto);
+
+            return Ok(employeesDto);
         }
 
         [HttpPost]
@@ -55,16 +59,7 @@ namespace HRManagementSystem.Controllers
             if (dto is null)
                 return BadRequest("Please enter the data to be modified.");
 
-            employee.Address = dto.Address;
-            employee.Arrival = dto.Arrival;
-            employee.FullName = dto.FullName;
-            employee.PhoneNumber = dto.PhoneNumber;
-            employee.DateOfJoin = dto.DateOfJoin;
-            employee.DepartmentId = dto.DepartmentId;
-            employee.Gender = dto.Gender;
-            employee.Nationality = dto.Nationality;
-            employee.Arrival = dto.Arrival;
-            employee.Departure = dto.Departure;
+            employee = dto.Adapt(employee);
 
             unitOfWork.Employees.Update(employee);
 

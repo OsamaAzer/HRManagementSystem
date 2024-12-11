@@ -1,13 +1,13 @@
 ﻿using RepositoryPatternWithUOW.Core.Enums;
+using System.ComponentModel.DataAnnotations;
 namespace RepositoryPatternWithUOW.Core.Models
 {
     public class Attendance
     {
         public int Id { get; set; }
 
+        [EnumDataType(typeof(AttendanceStatus))]
         public AttendanceStatus Status { get; set; }
-
-        public DayOfWeek AttendanceDay { get; set; }
 
         public DateOnly Date { get; set; }
 

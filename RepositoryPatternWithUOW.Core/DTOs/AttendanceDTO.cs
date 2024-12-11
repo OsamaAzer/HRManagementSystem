@@ -7,8 +7,6 @@ namespace RepositoryPatternWithUOW.Core.DTOs
     {
         public AttendanceStatus Status { get; set; }
 
-        public DayOfWeek AttendanceDay { get; set; }
-
         public DateOnly Date { get; set; }
 
         public TimeOnly ArrivingTime { get; set; }

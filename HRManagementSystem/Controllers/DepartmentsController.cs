@@ -29,7 +29,11 @@ namespace HRManagementSystem.Controllers
             if (departments.Count() == 0)
                 return NotFound("No departments found!");
 
-            return Ok(departments);
+            IEnumerable<DepartmentDTO> departmentsDto = new List<DepartmentDTO>();
+
+            departmentsDto = departments.Adapt(departmentsDto);
+
+            return Ok(departmentsDto);
         }
 
         [HttpPost]
@@ -55,7 +59,7 @@ namespace HRManagementSystem.Controllers
             if (department is null)
                 return NotFound($"There is no Department with ID: {id}");
 
-            department.Name = dto.Name;
+            department = dto.Adapt(department);
 
             unitOfWork.Departments.Update(department);
 

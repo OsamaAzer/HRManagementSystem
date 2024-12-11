@@ -24,12 +24,16 @@ namespace HRManagementSystem.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllAsync()
         {
-            var holiday = await unitOfWork.OfficialHolidays.Find();
+            var holidays = await unitOfWork.OfficialHolidays.Find();
 
-            if (holiday.Count() == 0)
+            if (holidays.Count() == 0)
                 return NotFound("No holidays found!");
 
-            return Ok(holiday);
+            IEnumerable<OfficialHolidayDTO> holidaysDto = new List<OfficialHolidayDTO>();
+
+            holidaysDto = holidays.Adapt(holidaysDto);
+
+            return Ok(holidaysDto);
         }
 
         [HttpPost]
@@ -39,7 +43,7 @@ namespace HRManagementSystem.Controllers
                 return BadRequest("Holiday data is required.");
 
             var holiday = dto.Adapt<OfficialHoliday>();
-            //OfficialHoliday holiday = dto.Adapt(holiday);
+
             await unitOfWork.OfficialHolidays.Add(holiday);
 
             unitOfWork.Complete();
@@ -55,10 +59,7 @@ namespace HRManagementSystem.Controllers
             if (holiday is null)
                 return NotFound($"There is no holiday with ID: {id}");
 
-            holiday = holiday.Adapt(holiday);
-            //holiday.Name = dto.Name;
-            //holiday.DayOfWeek = dto.DayOfWeek;
-            //holiday.Date = dto.Date;
+            holiday = dto.Adapt(holiday);
 
             unitOfWork.OfficialHolidays.Update(holiday);
 

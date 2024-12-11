@@ -24,12 +24,16 @@ namespace HRManagementSystem.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllAsync()
         {
-            var attendances = await unitOfWork.Attendences.Find();
+            var attendances = await unitOfWork.Attendences.Find(["Employee"]);
 
             if (attendances.Count() == 0)
                 return NotFound("No attendances found!");
 
-            return Ok(attendances);
+            IEnumerable<AttendanceDTO> attendancesDto = new List<AttendanceDTO>();
+
+            attendancesDto = attendances.Adapt(attendancesDto);
+
+            return Ok(attendancesDto);
         }
 
         [HttpPost]
@@ -52,14 +56,7 @@ namespace HRManagementSystem.Controllers
             if (attendance is null)
                 return NotFound($"There is no attendance with ID: {id}");
 
-            attendance.ArrivingTime = dto.ArrivingTime;
-            attendance.LeavingTime = dto.LeavingTime;
-            attendance.Status = dto.Status;
-            attendance.LateTimeHours = dto.LateTimeHours;
-            attendance.OverTimeHours = dto.OverTimeHours;
-            attendance.AttendanceDay = dto.AttendanceDay;
-            attendance.Date = dto.Date;
-            attendance.EmployeeId = dto.EmployeeId;
+            attendance = dto.Adapt(attendance);
 
             attendance = unitOfWork.Attendences.Update(attendance);
 

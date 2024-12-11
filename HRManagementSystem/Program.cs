@@ -7,9 +7,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddDbContext<AppDbContext>(options => 
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"),
-    b => b.MigrationsAssembly(typeof(AppDbContext).Assembly.FullName)));
+builder.Services.AddDbContext<AppDbContext>(
+    options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"),
+    b => b.MigrationsAssembly(typeof(AppDbContext).Assembly.FullName))
+);
 
 //builder.Services.AddTransient(typeof(IBaseRepository<>), typeof(BaseRepository<>));
 //builder.Services.AddScoped<IBaseRepository<Type>, BaseRepository<Type>>();

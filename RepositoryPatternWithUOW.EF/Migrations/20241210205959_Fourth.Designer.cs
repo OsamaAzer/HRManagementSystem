@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RepositoryPatternWithUOW.EF;
 
@@ -11,9 +12,11 @@ using RepositoryPatternWithUOW.EF;
 namespace RepositoryPatternWithUOW.EF.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241210205959_Fourth")]
+    partial class Fourth
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -32,6 +35,10 @@ namespace RepositoryPatternWithUOW.EF.Migrations
 
                     b.Property<TimeOnly>("ArrivingTime")
                         .HasColumnType("time");
+
+                    b.Property<string>("AttendanceDay")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateOnly>("Date")
                         .HasColumnType("date");
@@ -137,11 +144,20 @@ namespace RepositoryPatternWithUOW.EF.Migrations
                     b.Property<DateOnly>("Date")
                         .HasColumnType("date");
 
+                    b.Property<string>("DayOfWeek")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("EmployeeId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("EmployeeId");
 
                     b.ToTable("OfficialHolidays");
                 });
@@ -156,6 +172,10 @@ namespace RepositoryPatternWithUOW.EF.Migrations
 
                     b.Property<DateOnly>("Date")
                         .HasColumnType("date");
+
+                    b.Property<string>("DayOfWeek")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("EmployeeId")
                         .HasColumnType("int");
@@ -183,10 +203,17 @@ namespace RepositoryPatternWithUOW.EF.Migrations
             modelBuilder.Entity("RepositoryPatternWithUOW.Core.Models.Employee", b =>
                 {
                     b.HasOne("RepositoryPatternWithUOW.Core.Models.Department", "Department")
-                        .WithMany("Employees")
+                        .WithMany()
                         .HasForeignKey("DepartmentId");
 
                     b.Navigation("Department");
+                });
+
+            modelBuilder.Entity("RepositoryPatternWithUOW.Core.Models.OfficialHoliday", b =>
+                {
+                    b.HasOne("RepositoryPatternWithUOW.Core.Models.Employee", null)
+                        .WithMany("OfficialHolidays")
+                        .HasForeignKey("EmployeeId");
                 });
 
             modelBuilder.Entity("RepositoryPatternWithUOW.Core.Models.SpecialLeave", b =>
@@ -198,14 +225,11 @@ namespace RepositoryPatternWithUOW.EF.Migrations
                     b.Navigation("Employee");
                 });
 
-            modelBuilder.Entity("RepositoryPatternWithUOW.Core.Models.Department", b =>
-                {
-                    b.Navigation("Employees");
-                });
-
             modelBuilder.Entity("RepositoryPatternWithUOW.Core.Models.Employee", b =>
                 {
                     b.Navigation("Attendances");
+
+                    b.Navigation("OfficialHolidays");
 
                     b.Navigation("SpecialLeaves");
                 });
