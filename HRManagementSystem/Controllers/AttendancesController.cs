@@ -9,7 +9,7 @@ namespace HRManagementSystem.Controllers
     [ApiController]
     [Route("[Controller]")]
     public class AttendancesController(IUnitOfWork unitOfWork) : ControllerBase
-    {
+    {  
         [HttpGet("{id}")]
         public async Task<IActionResult> GetByIdAsync(int id)
         {
@@ -39,6 +39,7 @@ namespace HRManagementSystem.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateAsync([FromBody] AttendanceDTO dto)
         {
+
             var attendance = dto.Adapt<Attendance>();
 
             await unitOfWork.Attendences.Add(attendance);
@@ -51,6 +52,7 @@ namespace HRManagementSystem.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAsync(int id, [FromBody] AttendanceDTO dto)
         {
+
             var attendance = await unitOfWork.Attendences.GetById(id);
 
             if (attendance is null)

@@ -7,7 +7,7 @@ namespace RepositoryPatternWithUOW.Core.DTOs
     {
         public string FullName { get; set; }
 
-        public Gender Gender { get; set; }
+        public string Gender { get; set; }
 
         public string Address { get; set; }
 

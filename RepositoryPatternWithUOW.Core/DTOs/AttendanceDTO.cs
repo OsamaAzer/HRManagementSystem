@@ -5,7 +5,7 @@ namespace RepositoryPatternWithUOW.Core.DTOs
 {
     public class AttendanceDTO
     {
-        public AttendanceStatus Status { get; set; }
+        public string Status { get; set; }
 
         public DateOnly Date { get; set; }
 

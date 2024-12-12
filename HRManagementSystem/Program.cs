@@ -1,3 +1,4 @@
+using HRManagementSystem;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
 using RepositoryPatternWithUOW.Core;
