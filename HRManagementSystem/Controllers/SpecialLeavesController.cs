@@ -24,7 +24,7 @@ namespace HRManagementSystem.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllAsync()
         {
-            var specialLeaves = await unitOfWork.SpecialLeaves.Find();
+            var specialLeaves = await unitOfWork.SpecialLeaves.FindAll();
 
             if (specialLeaves.Count() == 0)
                 return NotFound("No Special Leaves found!");

@@ -15,6 +15,8 @@ namespace RepositoryPatternWithUOW.Core
 
         public IBaseRepository<SpecialLeave> SpecialLeaves { get; }
 
+        public IBaseRepository<Role> Roles { get; }
+
         int Complete();
     }
 }

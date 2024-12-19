@@ -24,11 +24,13 @@ namespace RepositoryPatternWithUOW.Core.Interfaces
 
         Task<int> Count(Expression<Func<T, bool>>? criteria);
 
-        Task<IEnumerable<T>> Find(Expression<Func<T,bool>> criteria, string[]? includes = null);
+        Task<IEnumerable<T>> FindAll(Expression<Func<T,bool>>? criteria, string[]? includes = null);
 
-        Task<IEnumerable<T>> Find(string[]? includes = null);
+        Task<T> FindOne(Expression<Func<T,bool>> criteria);
 
-        Task<IEnumerable<T>> FindAll(Expression<Func<T, bool>> criteria);
+        Task<IEnumerable<T>> FindAll(string[]? includes = null);
+
+        //Task<IEnumerable<T>> FindAll(Expression<Func<T, bool>> criteria);
 
 
         //Task<IEnumerable<T>> GetRange(int skip, int take);

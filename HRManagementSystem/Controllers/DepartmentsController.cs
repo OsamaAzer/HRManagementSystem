@@ -1,4 +1,5 @@
 ﻿using Mapster;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RepositoryPatternWithUOW.Core;
 using RepositoryPatternWithUOW.Core.DTOs;
@@ -6,10 +7,12 @@ using RepositoryPatternWithUOW.Core.Models;
 
 namespace HRManagementSystem.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("[Controller]")]
     public class DepartmentsController(IUnitOfWork unitOfWork) : ControllerBase
     {
+        
         [HttpGet("{id}")]
         public async Task<IActionResult> GetByIdAsync(int id)
         {
@@ -24,7 +27,7 @@ namespace HRManagementSystem.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllAsync()
         {
-            var departments = await unitOfWork.Departments.Find();
+            var departments = await unitOfWork.Departments.FindAll();
 
             if (departments.Count() == 0)
                 return NotFound("No departments found!");

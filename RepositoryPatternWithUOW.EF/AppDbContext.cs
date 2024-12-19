@@ -8,7 +8,7 @@ namespace RepositoryPatternWithUOW.EF
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
-        //DbSets
+        
         public DbSet<Department> Departments { get; set; }
 
         public DbSet<Employee> Employees { get; set; }
@@ -18,6 +18,9 @@ namespace RepositoryPatternWithUOW.EF
         public DbSet<OfficialHoliday> OfficialHolidays { get; set; }
 
         public DbSet<SpecialLeave> SpecialLeaves { get; set; }
+
+        public DbSet<Role> Roles { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

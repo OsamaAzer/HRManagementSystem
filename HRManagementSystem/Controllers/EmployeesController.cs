@@ -24,12 +24,12 @@ namespace HRManagementSystem.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllAsync()
         {
-            var employees = await unitOfWork.Employees.Find(["Department"]);
+            var employees = await unitOfWork.Employees.FindAll(["Department"]);
 
             if (employees.Count() == 0)
                 return NotFound("No employees found!");
 
-            IEnumerable<EmployeeDTO> employeesDto = new List<EmployeeDTO>();
+            IEnumerable<EmployeeRegisterDTO> employeesDto = new List<EmployeeRegisterDTO>();
 
             employeesDto = employees.Adapt(employeesDto);
 
@@ -37,7 +37,7 @@ namespace HRManagementSystem.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateAsync([FromBody] EmployeeDTO dto)
+        public async Task<IActionResult> CreateAsync([FromBody] EmployeeRegisterDTO dto)
         {
             var employee = dto.Adapt<Employee>();
 
@@ -49,7 +49,7 @@ namespace HRManagementSystem.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateAsync(int id, [FromBody] EmployeeDTO dto)
+        public async Task<IActionResult> UpdateAsync(int id, [FromBody] EmployeeRegisterDTO dto)
         {
             Employee employee = await unitOfWork.Employees.GetById(id);
 

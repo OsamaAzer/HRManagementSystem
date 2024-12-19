@@ -16,7 +16,7 @@ namespace HRManagementSystem.Controllers
             var holiday = await unitOfWork.OfficialHolidays.GetById(id);
 
             if (holiday == null)
-                return NotFound($"Holiday with ID: {id} not found");
+                return NotFound($"Official holiday with ID: {id} not found");
 
             return Ok(holiday);
         }
@@ -24,10 +24,10 @@ namespace HRManagementSystem.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllAsync()
         {
-            var holidays = await unitOfWork.OfficialHolidays.Find();
+            var holidays = await unitOfWork.OfficialHolidays.FindAll();
 
             if (holidays.Count() == 0)
-                return NotFound("No holidays found!");
+                return NotFound("No official holidays found!");
 
             IEnumerable<OfficialHolidayDTO> holidaysDto = new List<OfficialHolidayDTO>();
 
@@ -40,7 +40,7 @@ namespace HRManagementSystem.Controllers
         public async Task<IActionResult> CreateAsync([FromBody] OfficialHolidayDTO dto)
         {
             if (dto == null)
-                return BadRequest("Holiday data is required.");
+                return BadRequest("Official holiday data is required.");
 
             var holiday = dto.Adapt<OfficialHoliday>();
 
@@ -57,7 +57,7 @@ namespace HRManagementSystem.Controllers
             OfficialHoliday holiday = await unitOfWork.OfficialHolidays.GetById(id);
 
             if (holiday is null)
-                return NotFound($"There is no holiday with ID: {id}");
+                return NotFound($"There is no official holiday with ID: {id}");
 
             holiday = dto.Adapt(holiday);
 
@@ -74,7 +74,7 @@ namespace HRManagementSystem.Controllers
             var holiday = await unitOfWork.OfficialHolidays.GetById(id);
 
             if (holiday is null)
-                return NotFound($"The holiday with ID: {id} doesn't exist!!!");
+                return NotFound($"The official holiday with ID: {id} doesn't exist!!!");
 
             unitOfWork.OfficialHolidays.Delete(holiday);
 

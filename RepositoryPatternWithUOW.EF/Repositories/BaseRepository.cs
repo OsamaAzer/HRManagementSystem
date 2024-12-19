@@ -7,11 +7,69 @@ namespace RepositoryPatternWithUOW.EF.Repositories
 {
     public class BaseRepository<T>(AppDbContext context) : IBaseRepository<T> where T : class
     {
+        public async Task<IEnumerable<T>> GetAll()
+        {
+            return await context.Set<T>().ToListAsync();
+        }
+
+        public async Task<T> GetById(int id)
+        {
+            return await context.Set<T>().FindAsync(id);
+        }
+
+        public T Update(T entity)
+        {
+            context.Set<T>().Update(entity);
+            return entity;
+        }
+
         public async Task<T> Add(T entity)
         {
             await context.Set<T>().AddAsync(entity);
             return entity;      
         }
+
+        public T Delete(T entity)
+        {
+            context.Set<T>().Remove(entity);
+            return entity;
+        }
+
+        public void DeleteRange(IEnumerable<T> entities)
+        {
+            context.Set<T>().RemoveRange(entities);
+        }
+
+        public async Task<IEnumerable<T>> FindAll(Expression<Func<T, bool>>? criteria, string[]? includes = null)
+        {
+            IQueryable<T> result = context.Set<T>();
+
+            if(includes is not null)
+                foreach (var include in includes)
+                    result.Include(include);
+
+            if(criteria is null)
+                return await result.ToListAsync();
+
+            return await result.Where(criteria).ToListAsync();
+        }
+
+        public async Task<T> FindOne(Expression<Func<T, bool>> criteria)
+        {
+            return await context.Set<T>().FirstOrDefaultAsync(criteria);
+        }
+
+        public async Task<IEnumerable<T>> FindAll(string[]? includes = null)
+        {
+            IQueryable<T> query = context.Set<T>();
+
+            if (includes != null)
+                foreach (var include in includes)
+                    query = query.Include(include);
+
+            return await query.ToListAsync();
+        }
+
 
         public async Task<IEnumerable<T>> AddRange(IEnumerable<T> entities)
         {
@@ -36,60 +94,6 @@ namespace RepositoryPatternWithUOW.EF.Repositories
 
             return await context.Set<T>().CountAsync(criteria);
         }
-
-        public T Delete(T entity)
-        {
-            context.Set<T>().Remove(entity);
-            return entity;
-        }
-
-        public void DeleteRange(IEnumerable<T> entities)
-        {
-            context.Set<T>().RemoveRange(entities);
-        }
-
-        public async Task<IEnumerable<T>> FindAll(Expression<Func<T, bool>> criteria)
-        {
-            return await context.Set<T>().Where(criteria).ToListAsync();
-        }
-
-        public async Task<IEnumerable<T>> Find(Expression<Func<T, bool>> criteria, string[]? includes = null)
-        {
-            IQueryable<T> query = context.Set<T>();
-
-            if (includes != null)
-                foreach (var include in includes)
-                    query = query.Include(include);
-
-            return await query.Where(criteria).ToListAsync();
-        }
-
-        public async Task<IEnumerable<T>> Find(string[]? includes = null)
-        {
-            IQueryable<T> query = context.Set<T>();
-
-            if (includes != null)
-                foreach (var include in includes)
-                    query = query.Include(include);
-
-            return await query.ToListAsync();
-        }
-
-        public async Task<IEnumerable<T>> GetAll()
-        {
-            return await context.Set<T>().ToListAsync();
-        }
-
-        public async Task<T> GetById(int id)
-        {
-
-            return await context.Set<T>().FindAsync(id);
-        }
-
-        public T Update(T entity)
-        {
-            context.Set<T>().Update(entity);
-            return entity;
-        }
+        
     }
 }

@@ -18,6 +18,8 @@ namespace RepositoryPatternWithUOW.EF
 
         public IBaseRepository<SpecialLeave> SpecialLeaves { get; private set; } = new BaseRepository<SpecialLeave>(context);
 
+        public IBaseRepository<Role> Roles { get; private set; } = new BaseRepository<Role>(context);
+
 
         public int Complete()
         {

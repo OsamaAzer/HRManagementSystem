@@ -15,6 +15,11 @@ namespace HRManagementSystem
             TypeAdapterConfig<Attendance, AttendanceDTO>.NewConfig().Map(des => des.Status, src => src.Status.ToString());
 
             TypeAdapterConfig<AttendanceDTO, Attendance>.NewConfig().Map(des => des.Status.ToString(), src => src.Status);
+
+            TypeAdapterConfig<EmployeeRegisterDTO, Employee>.NewConfig().Map(des => des.Gender.ToString(), src => src.Gender);
+
+            TypeAdapterConfig<EmployeeRegisterDTO, Employee>.NewConfig().Map(des => des.Gender.ToString(), src => src.Gender);
+
         }
     }
 }

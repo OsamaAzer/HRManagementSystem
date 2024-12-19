@@ -24,7 +24,7 @@ namespace HRManagementSystem.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllAsync()
         {
-            var attendances = await unitOfWork.Attendences.Find(["Employee"]);
+            var attendances = await unitOfWork.Attendences.FindAll(["Employee"]);
 
             if (attendances.Count() == 0)
                 return NotFound("No attendances found!");

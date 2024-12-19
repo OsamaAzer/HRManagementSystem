@@ -3,7 +3,7 @@ namespace RepositoryPatternWithUOW.Core.Enums
 {
     public enum AttendanceStatus
     {
-        OnTime,
+        OnTime = 1,
         Late,
         Absent
     }
