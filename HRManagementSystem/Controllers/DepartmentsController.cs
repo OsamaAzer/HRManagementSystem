@@ -7,12 +7,11 @@ using RepositoryPatternWithUOW.Core.Models;
 
 namespace HRManagementSystem.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     [ApiController]
     [Route("[Controller]")]
     public class DepartmentsController(IUnitOfWork unitOfWork) : ControllerBase
     {
-        
         [HttpGet("{id}")]
         public async Task<IActionResult> GetByIdAsync(int id)
         {
@@ -32,11 +31,11 @@ namespace HRManagementSystem.Controllers
             if (departments.Count() == 0)
                 return NotFound("No departments found!");
 
-            IEnumerable<DepartmentDTO> departmentsDto = new List<DepartmentDTO>();
+            //IEnumerable<DepartmentDTO> departmentsDto = new List<DepartmentDTO>();
 
-            departmentsDto = departments.Adapt(departmentsDto);
+            //departmentsDto = departments.Adapt(departmentsDto);
 
-            return Ok(departmentsDto);
+            return Ok(departments);
         }
 
         [HttpPost]
@@ -72,7 +71,7 @@ namespace HRManagementSystem.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteDepartment(int id)
+        public async Task<IActionResult> Delete(int id)
         {
             var department = await unitOfWork.Departments.GetById(id);
 

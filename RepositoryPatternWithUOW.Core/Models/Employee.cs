@@ -32,15 +32,12 @@ namespace RepositoryPatternWithUOW.Core.Models
 
         public virtual ICollection<SpecialLeave> SpecialLeaves { get; set; } = new List<SpecialLeave>();
 
-        // For Authentication
-        public string Username { get; set; }
-
-        public string Email {  get; set; }
-
-        public string Password { get; set; }
-        //
         public int? RoleId { get; set; }
 
         public virtual Role? Role { get; set; }
+
+        public int? EmployeeSigningInfoId { get; set; }
+
+        public virtual EmployeeSigningInfo? EmployeeSigningInfo { get; set; }
     }
 }

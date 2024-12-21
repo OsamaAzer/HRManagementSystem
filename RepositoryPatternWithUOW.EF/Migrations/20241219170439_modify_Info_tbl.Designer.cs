@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RepositoryPatternWithUOW.EF;
 
@@ -11,9 +12,11 @@ using RepositoryPatternWithUOW.EF;
 namespace RepositoryPatternWithUOW.EF.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241219170439_modify_Info_tbl")]
+    partial class modify_Info_tbl
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -103,6 +106,9 @@ namespace RepositoryPatternWithUOW.EF.Migrations
                     b.Property<int?>("EmployeeSigningInfoId")
                         .HasColumnType("int");
 
+                    b.Property<string>("EmployeeSigningInfoUsername")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("FullName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -128,7 +134,7 @@ namespace RepositoryPatternWithUOW.EF.Migrations
 
                     b.HasIndex("DepartmentId");
 
-                    b.HasIndex("EmployeeSigningInfoId");
+                    b.HasIndex("EmployeeSigningInfoUsername");
 
                     b.HasIndex("RoleId");
 
@@ -137,11 +143,8 @@ namespace RepositoryPatternWithUOW.EF.Migrations
 
             modelBuilder.Entity("RepositoryPatternWithUOW.Core.Models.EmployeeSigningInfo", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("Username")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -159,11 +162,7 @@ namespace RepositoryPatternWithUOW.EF.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
+                    b.HasKey("Username");
 
                     b.ToTable("EmployeeSigningInfos");
                 });
@@ -247,7 +246,7 @@ namespace RepositoryPatternWithUOW.EF.Migrations
 
                     b.HasOne("RepositoryPatternWithUOW.Core.Models.EmployeeSigningInfo", "EmployeeSigningInfo")
                         .WithMany()
-                        .HasForeignKey("EmployeeSigningInfoId");
+                        .HasForeignKey("EmployeeSigningInfoUsername");
 
                     b.HasOne("RepositoryPatternWithUOW.Core.Models.Role", "Role")
                         .WithMany("Employees")

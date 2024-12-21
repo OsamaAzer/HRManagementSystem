@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RepositoryPatternWithUOW.EF;
 
@@ -11,9 +12,11 @@ using RepositoryPatternWithUOW.EF;
 namespace RepositoryPatternWithUOW.EF.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241219143856_AddEmployeesInfoTable")]
+    partial class AddEmployeesInfoTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -100,9 +103,6 @@ namespace RepositoryPatternWithUOW.EF.Migrations
                     b.Property<TimeOnly?>("DepartureTime")
                         .HasColumnType("time");
 
-                    b.Property<int?>("EmployeeSigningInfoId")
-                        .HasColumnType("int");
-
                     b.Property<string>("FullName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -128,8 +128,6 @@ namespace RepositoryPatternWithUOW.EF.Migrations
 
                     b.HasIndex("DepartmentId");
 
-                    b.HasIndex("EmployeeSigningInfoId");
-
                     b.HasIndex("RoleId");
 
                     b.ToTable("Employees");
@@ -147,7 +145,14 @@ namespace RepositoryPatternWithUOW.EF.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("EmployeeId")
+                        .HasColumnType("int");
+
                     b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Gender")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -164,6 +169,8 @@ namespace RepositoryPatternWithUOW.EF.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("EmployeeId");
 
                     b.ToTable("EmployeeSigningInfos");
                 });
@@ -245,19 +252,22 @@ namespace RepositoryPatternWithUOW.EF.Migrations
                         .WithMany("Employees")
                         .HasForeignKey("DepartmentId");
 
-                    b.HasOne("RepositoryPatternWithUOW.Core.Models.EmployeeSigningInfo", "EmployeeSigningInfo")
-                        .WithMany()
-                        .HasForeignKey("EmployeeSigningInfoId");
-
                     b.HasOne("RepositoryPatternWithUOW.Core.Models.Role", "Role")
                         .WithMany("Employees")
                         .HasForeignKey("RoleId");
 
                     b.Navigation("Department");
 
-                    b.Navigation("EmployeeSigningInfo");
-
                     b.Navigation("Role");
+                });
+
+            modelBuilder.Entity("RepositoryPatternWithUOW.Core.Models.EmployeeSigningInfo", b =>
+                {
+                    b.HasOne("RepositoryPatternWithUOW.Core.Models.Employee", "Employee")
+                        .WithMany()
+                        .HasForeignKey("EmployeeId");
+
+                    b.Navigation("Employee");
                 });
 
             modelBuilder.Entity("RepositoryPatternWithUOW.Core.Models.SpecialLeave", b =>

@@ -16,10 +16,10 @@ namespace HRManagementSystem
 
             TypeAdapterConfig<AttendanceDTO, Attendance>.NewConfig().Map(des => des.Status.ToString(), src => src.Status);
 
-            TypeAdapterConfig<EmployeeRegisterDTO, Employee>.NewConfig().Map(des => des.Gender.ToString(), src => src.Gender);
-
-            TypeAdapterConfig<EmployeeRegisterDTO, Employee>.NewConfig().Map(des => des.Gender.ToString(), src => src.Gender);
+            //TypeAdapterConfig<EmployeeSigningInfoDTO, EmployeeSigningInfo>.NewConfig()
+            //    .Map(des => BCrypt.Net.BCrypt.HashPassword(des.Password), src => src.Password);
 
         }
     }
 }
+            //BCrypt.Net.BCrypt.HashPassword(des.Password)

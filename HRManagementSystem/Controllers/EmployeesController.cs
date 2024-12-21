@@ -1,4 +1,5 @@
 ﻿using Mapster;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RepositoryPatternWithUOW.Core;
 using RepositoryPatternWithUOW.Core.DTOs;
@@ -6,10 +7,12 @@ using RepositoryPatternWithUOW.Core.Models;
 
 namespace HRManagementSystem.Controllers
 {
+    [Authorize(Roles = "Admin")]
     [ApiController]
     [Route("[Controller]")]
     public class EmployeesController(IUnitOfWork unitOfWork) : ControllerBase
     {
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetByIdAsync(int id)
         {
@@ -29,15 +32,15 @@ namespace HRManagementSystem.Controllers
             if (employees.Count() == 0)
                 return NotFound("No employees found!");
 
-            IEnumerable<EmployeeRegisterDTO> employeesDto = new List<EmployeeRegisterDTO>();
+            //IEnumerable<EmployeeDTO> employeesDto = new List<EmployeeDTO>();
 
-            employeesDto = employees.Adapt(employeesDto);
+            //employeesDto = employees.Adapt(employeesDto);
 
-            return Ok(employeesDto);
+            return Ok(employees);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateAsync([FromBody] EmployeeRegisterDTO dto)
+        public async Task<IActionResult> CreateAsync([FromBody] EmployeeDTO dto)
         {
             var employee = dto.Adapt<Employee>();
 
@@ -49,7 +52,7 @@ namespace HRManagementSystem.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateAsync(int id, [FromBody] EmployeeRegisterDTO dto)
+        public async Task<IActionResult> UpdateAsync(int id, [FromBody] EmployeeDTO dto)
         {
             Employee employee = await unitOfWork.Employees.GetById(id);
 
@@ -69,7 +72,7 @@ namespace HRManagementSystem.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteDepartment(int id)
+        public async Task<IActionResult> Delete(int id)
         {
             var employee = await unitOfWork.Employees.GetById(id);
 

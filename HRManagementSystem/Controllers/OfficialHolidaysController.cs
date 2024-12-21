@@ -1,4 +1,5 @@
 ﻿using Mapster;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RepositoryPatternWithUOW.Core;
 using RepositoryPatternWithUOW.Core.DTOs;
@@ -10,6 +11,7 @@ namespace HRManagementSystem.Controllers
     [Route("[Controller]")]
     public class OfficialHolidaysController(IUnitOfWork unitOfWork) : ControllerBase
     {
+        [Authorize(Roles ="Admin")]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetByIdAsync(int id)
         {
@@ -21,6 +23,7 @@ namespace HRManagementSystem.Controllers
             return Ok(holiday);
         }
 
+        [Authorize(Roles = "Admin, User")]
         [HttpGet]
         public async Task<IActionResult> GetAllAsync()
         {
@@ -36,6 +39,7 @@ namespace HRManagementSystem.Controllers
             return Ok(holidaysDto);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> CreateAsync([FromBody] OfficialHolidayDTO dto)
         {
@@ -51,6 +55,7 @@ namespace HRManagementSystem.Controllers
             return Ok(holiday);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAsync(int id, [FromBody] OfficialHolidayDTO dto)
         {
@@ -68,8 +73,9 @@ namespace HRManagementSystem.Controllers
             return Ok(holiday);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteHoliday(int id)
+        public async Task<IActionResult> Delete(int id)
         {
             var holiday = await unitOfWork.OfficialHolidays.GetById(id);
 

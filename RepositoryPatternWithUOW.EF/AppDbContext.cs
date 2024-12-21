@@ -7,7 +7,6 @@ namespace RepositoryPatternWithUOW.EF
     public class AppDbContext : DbContext
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
-
         
         public DbSet<Department> Departments { get; set; }
 
@@ -20,6 +19,8 @@ namespace RepositoryPatternWithUOW.EF
         public DbSet<SpecialLeave> SpecialLeaves { get; set; }
 
         public DbSet<Role> Roles { get; set; }
+
+        public DbSet<EmployeeSigningInfo> EmployeeSigningInfos { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

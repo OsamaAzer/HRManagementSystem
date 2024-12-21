@@ -1,4 +1,5 @@
 ﻿using Mapster;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RepositoryPatternWithUOW.Core;
 using RepositoryPatternWithUOW.Core.DTOs;
@@ -6,10 +7,12 @@ using RepositoryPatternWithUOW.Core.Models;
 
 namespace HRManagementSystem.Controllers
 {
+    
     [ApiController]
     [Route("[Controller]")]
     public class SpecialLeavesController(IUnitOfWork unitOfWork) : ControllerBase
     {
+        [Authorize(Roles = "Admin")]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetByIdAsync(int id)
         {
@@ -21,6 +24,7 @@ namespace HRManagementSystem.Controllers
             return Ok(specialLeave);
         }
 
+        [Authorize(Roles = "Admin, User")]
         [HttpGet]
         public async Task<IActionResult> GetAllAsync()
         {
@@ -36,6 +40,7 @@ namespace HRManagementSystem.Controllers
             return Ok(specialLeavesDto);
         }
 
+        [Authorize(Roles = "Admin, User")]
         [HttpPost]
         public async Task<IActionResult> CreateAsync([FromBody] SpecialLeaveDTO dto)
         {
@@ -51,6 +56,7 @@ namespace HRManagementSystem.Controllers
             return Ok(specialLeave);
         }
 
+        [Authorize(Roles = "Admin, User")]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAsync(int id, [FromBody] SpecialLeaveDTO dto)
         {
@@ -68,8 +74,9 @@ namespace HRManagementSystem.Controllers
             return Ok(specialLeave);
         }
 
+        [Authorize(Roles = "Admin, User")]
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteHoliday(int id)
+        public async Task<IActionResult> Delete(int id)
         {
             var specialLeave = await unitOfWork.SpecialLeaves.GetById(id);
 

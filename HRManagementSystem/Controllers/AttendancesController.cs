@@ -1,4 +1,5 @@
 ﻿using Mapster;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RepositoryPatternWithUOW.Core;
 using RepositoryPatternWithUOW.Core.DTOs;
@@ -9,7 +10,8 @@ namespace HRManagementSystem.Controllers
     [ApiController]
     [Route("[Controller]")]
     public class AttendancesController(IUnitOfWork unitOfWork) : ControllerBase
-    {  
+    {
+        [Authorize(Roles = "Admin")]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetByIdAsync(int id)
         {
@@ -21,6 +23,7 @@ namespace HRManagementSystem.Controllers
             return Ok(attendance);
         }
 
+        [Authorize(Roles = "Admin, User")]
         [HttpGet]
         public async Task<IActionResult> GetAllAsync()
         {
@@ -36,6 +39,7 @@ namespace HRManagementSystem.Controllers
             return Ok(attendancesDto);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> CreateAsync([FromBody] AttendanceDTO dto)
         {
@@ -49,6 +53,7 @@ namespace HRManagementSystem.Controllers
             return Ok(attendance);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAsync(int id, [FromBody] AttendanceDTO dto)
         {
@@ -67,8 +72,9 @@ namespace HRManagementSystem.Controllers
             return Ok(attendance);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteDepartment(int id)
+        public async Task<IActionResult> Delete(int id)
         {
             var attendance = await unitOfWork.Attendences.GetById(id);
 

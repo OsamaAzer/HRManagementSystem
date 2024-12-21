@@ -1,5 +1,7 @@
 ﻿using Mapster;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Extensions;
 using RepositoryPatternWithUOW.Core;
 using RepositoryPatternWithUOW.Core.DTOs;
@@ -7,66 +9,70 @@ using RepositoryPatternWithUOW.Core.Enums;
 using RepositoryPatternWithUOW.Core.Helpers;
 using RepositoryPatternWithUOW.Core.Models;
 using RepositoryPatternWithUOW.EF;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace HRManagementSystem.Controllers
 {
+    [AllowAnonymous]
     [ApiController]
     [Route("[Controller]")]
-    public class AuthController(IUnitOfWork unitOfWork, JwtService jwtService) : ControllerBase
+    public class AuthController(IUnitOfWork unitOfWork, JWT jwt) : ControllerBase
     {
+        [AllowAnonymous]
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] EmployeeRegisterDTO dto)
+        public async Task<IActionResult> Register([FromBody] EmployeeSigningInfoDTO dto)
         {
-            if (await unitOfWork.Employees.FindOne(e => e.Username == dto.Username) is not null)
+            if (await unitOfWork.EmployeeSigningInfo.FindOne(e => e.Username == dto.Username) is not null)
                 return BadRequest("The Username is already exists");
 
-            var employee = new Employee();
+            var employeeInfo = new EmployeeSigningInfo();
 
-            employee = dto.Adapt(employee);
+            employeeInfo = dto.Adapt(employeeInfo);
+            employeeInfo.Password = BCrypt.Net.BCrypt.HashPassword(dto.Password);
 
-            //var employee = new Employee
-            //{
-            //    FullName = dto.FullName,
-            //    Username = dto.Username,
-            //    Password = BCrypt.Net.BCrypt.HashPassword(dto.Password),
-            //    Nationality = dto.Nationality,
-            //    PhoneNumber = dto.PhoneNumber,
-            //    Email = dto.Email,
-            //    Address = dto.Address,
-            //    Gender = dto.Gender.GetEnumFromDisplayName()
-            //};
-
-            await unitOfWork.Employees.Add(employee);
+            await unitOfWork.EmployeeSigningInfo.Add(employeeInfo);
 
             unitOfWork.Complete();
 
             return Ok("User registered successfully.");
-
         }
 
+        [AllowAnonymous]
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDTO loginDto)
         {
-            var employee = await unitOfWork.Employees.FindOne(e => e.Username == loginDto.Username);
+            //var isVerified = BCrypt.Net.BCrypt.Verify(loginDto.Password, Employee.)
+
+            var employee = await unitOfWork.EmployeeSigningInfo
+                .FindOne(e => e.Email == loginDto.Email);
 
             if (employee == null || !BCrypt.Net.BCrypt.Verify(loginDto.Password, employee.Password))
-            {
                 return Unauthorized("Invalid Username or Password!");
-            }
 
-            var tokenRequestDTO = new TokenRequestDTO();
+            var tokenHandler = new JwtSecurityTokenHandler();
 
-            tokenRequestDTO = loginDto.Adapt(tokenRequestDTO);
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Issuer = jwt.Issuer,
+                Audience = jwt.Audience,
+                SigningCredentials = new SigningCredentials
+                    (new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt.SigningKey)), SecurityAlgorithms.HmacSha256),
+                Subject = new ClaimsIdentity(new Claim[]
+                {
+                    new(ClaimTypes.NameIdentifier, employee.Id.ToString()),
+                    new(ClaimTypes.Email, employee.Email),
+                    new(ClaimTypes.Role, "Admin"),
+                    new(ClaimTypes.Role, "User")
+                })
+            };
 
-            //var tokenRequestDTO = new TokenRequestDTO
-            //{
-            //    Username = employee.Username,
-            //    Role = employee.Role.Name
-            //};
+            var securityToken = tokenHandler.CreateToken(tokenDescriptor);
 
-            var token = jwtService.GenerateToken(tokenRequestDTO);
+            var accessToken = tokenHandler.WriteToken(securityToken);
 
-            return Ok(new { Token = token });
+            return Ok(accessToken);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Mapster;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RepositoryPatternWithUOW.Core;
 using RepositoryPatternWithUOW.Core.DTOs;
@@ -6,6 +7,7 @@ using RepositoryPatternWithUOW.Core.Models;
 
 namespace HRManagementSystem.Controllers
 {
+    [Authorize(Roles = "Admin")]
     [ApiController]
     [Route("[Controller]")]
     public class RolesController(IUnitOfWork unitOfWork) : ControllerBase
@@ -29,11 +31,11 @@ namespace HRManagementSystem.Controllers
             if (roles.Count() == 0)
                 return NotFound("No Roles found!");
 
-            IEnumerable<RoleDTO> rolesDto = new List<RoleDTO>();
+            //IEnumerable<RoleDTO> rolesDto = new List<RoleDTO>();
 
-            rolesDto = roles.Adapt(rolesDto);
+            //rolesDto = roles.Adapt(rolesDto);
 
-            return Ok(rolesDto);
+            return Ok(roles);
         }
 
         [HttpPost]
@@ -69,7 +71,7 @@ namespace HRManagementSystem.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteHoliday(int id)
+        public async Task<IActionResult> Delete(int id)
         {
             var role = await unitOfWork.Roles.GetById(id);
 
