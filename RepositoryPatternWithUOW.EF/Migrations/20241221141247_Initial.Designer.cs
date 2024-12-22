@@ -12,8 +12,8 @@ using RepositoryPatternWithUOW.EF;
 namespace RepositoryPatternWithUOW.EF.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241210212528_Fifth")]
-    partial class Fifth
+    [Migration("20241221141247_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,28 @@ namespace RepositoryPatternWithUOW.EF.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("RepositoryPatternWithUOW.Core.Models.ApplicationUser", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FullName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Password")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ApplicationUsers");
+                });
 
             modelBuilder.Entity("RepositoryPatternWithUOW.Core.Models.Attendance", b =>
                 {
@@ -39,7 +61,7 @@ namespace RepositoryPatternWithUOW.EF.Migrations
                     b.Property<DateOnly>("Date")
                         .HasColumnType("date");
 
-                    b.Property<int?>("EmployeeId")
+                    b.Property<int>("EmployeeId")
                         .HasColumnType("int");
 
                     b.Property<int>("LateTimeHours")
@@ -88,23 +110,24 @@ namespace RepositoryPatternWithUOW.EF.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Address")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<TimeOnly>("Arrival")
-                        .HasColumnType("time");
-
-                    b.Property<DateOnly>("DateOfJoin")
-                        .HasColumnType("date");
-
-                    b.Property<int?>("DepartmentId")
+                    b.Property<int>("ApplicationUserId")
                         .HasColumnType("int");
 
-                    b.Property<TimeOnly>("Departure")
+                    b.Property<TimeOnly?>("ArrivalTime")
+                        .HasColumnType("time");
+
+                    b.Property<DateOnly?>("ContractDate")
+                        .HasColumnType("date");
+
+                    b.Property<int>("DepartmentId")
+                        .HasColumnType("int");
+
+                    b.Property<TimeOnly?>("DepartureTime")
                         .HasColumnType("time");
 
                     b.Property<string>("FullName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Gender")
@@ -112,17 +135,17 @@ namespace RepositoryPatternWithUOW.EF.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("JobTitle")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Nationality")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long>("PhoneNumber")
+                    b.Property<long?>("PhoneNumber")
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId");
 
                     b.HasIndex("DepartmentId");
 
@@ -149,6 +172,23 @@ namespace RepositoryPatternWithUOW.EF.Migrations
                     b.ToTable("OfficialHolidays");
                 });
 
+            modelBuilder.Entity("RepositoryPatternWithUOW.Core.Models.Role", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Roles");
+                });
+
             modelBuilder.Entity("RepositoryPatternWithUOW.Core.Models.SpecialLeave", b =>
                 {
                     b.Property<int>("Id")
@@ -160,7 +200,7 @@ namespace RepositoryPatternWithUOW.EF.Migrations
                     b.Property<DateOnly>("Date")
                         .HasColumnType("date");
 
-                    b.Property<int?>("EmployeeId")
+                    b.Property<int>("EmployeeId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
@@ -174,20 +214,55 @@ namespace RepositoryPatternWithUOW.EF.Migrations
                     b.ToTable("SpecialLeaves");
                 });
 
+            modelBuilder.Entity("RepositoryPatternWithUOW.Core.Models.UserRole", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ApplicationUserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("UserRoles");
+                });
+
             modelBuilder.Entity("RepositoryPatternWithUOW.Core.Models.Attendance", b =>
                 {
                     b.HasOne("RepositoryPatternWithUOW.Core.Models.Employee", "Employee")
                         .WithMany("Attendances")
-                        .HasForeignKey("EmployeeId");
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Employee");
                 });
 
             modelBuilder.Entity("RepositoryPatternWithUOW.Core.Models.Employee", b =>
                 {
+                    b.HasOne("RepositoryPatternWithUOW.Core.Models.ApplicationUser", "ApplicationUser")
+                        .WithMany()
+                        .HasForeignKey("ApplicationUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("RepositoryPatternWithUOW.Core.Models.Department", "Department")
                         .WithMany("Employees")
-                        .HasForeignKey("DepartmentId");
+                        .HasForeignKey("DepartmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUser");
 
                     b.Navigation("Department");
                 });
@@ -196,9 +271,35 @@ namespace RepositoryPatternWithUOW.EF.Migrations
                 {
                     b.HasOne("RepositoryPatternWithUOW.Core.Models.Employee", "Employee")
                         .WithMany("SpecialLeaves")
-                        .HasForeignKey("EmployeeId");
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Employee");
+                });
+
+            modelBuilder.Entity("RepositoryPatternWithUOW.Core.Models.UserRole", b =>
+                {
+                    b.HasOne("RepositoryPatternWithUOW.Core.Models.ApplicationUser", "ApplicationUser")
+                        .WithMany("UserRoles")
+                        .HasForeignKey("ApplicationUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("RepositoryPatternWithUOW.Core.Models.Role", "Role")
+                        .WithMany("UserRoles")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUser");
+
+                    b.Navigation("Role");
+                });
+
+            modelBuilder.Entity("RepositoryPatternWithUOW.Core.Models.ApplicationUser", b =>
+                {
+                    b.Navigation("UserRoles");
                 });
 
             modelBuilder.Entity("RepositoryPatternWithUOW.Core.Models.Department", b =>
@@ -211,6 +312,11 @@ namespace RepositoryPatternWithUOW.EF.Migrations
                     b.Navigation("Attendances");
 
                     b.Navigation("SpecialLeaves");
+                });
+
+            modelBuilder.Entity("RepositoryPatternWithUOW.Core.Models.Role", b =>
+                {
+                    b.Navigation("UserRoles");
                 });
 #pragma warning restore 612, 618
         }

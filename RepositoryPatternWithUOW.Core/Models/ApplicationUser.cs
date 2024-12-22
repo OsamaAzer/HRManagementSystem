@@ -1,11 +1,15 @@
 ﻿
 namespace RepositoryPatternWithUOW.Core.Models
 {
-    public class Role
+    public class ApplicationUser
     {
         public int Id { get; set; }
 
-        public string Name { get; set; }
+        public string? FullName { get; set; }
+
+        public string? Email { get; set; }
+
+        public string? Password { get; set; }
 
         public virtual ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
     }

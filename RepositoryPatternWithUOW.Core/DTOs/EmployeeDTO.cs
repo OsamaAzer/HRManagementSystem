@@ -5,8 +5,6 @@ namespace RepositoryPatternWithUOW.Core.DTOs
 {
     public class EmployeeDTO
     {
-        public string FullName { get; set; }
-
         public string Gender { get; set; }
 
         public string Address { get; set; }
@@ -25,8 +23,6 @@ namespace RepositoryPatternWithUOW.Core.DTOs
 
         public int? DepartmentId { get; set; }
 
-        public int? RoleId { get; set; }
-
-        public int? EmployeeSigningInfoId { get; set; }
+        public int? ApplicationUserId { get; set; }
     }
 }

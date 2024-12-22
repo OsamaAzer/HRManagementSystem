@@ -2,13 +2,10 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Extensions;
 using RepositoryPatternWithUOW.Core;
 using RepositoryPatternWithUOW.Core.DTOs;
-using RepositoryPatternWithUOW.Core.Enums;
 using RepositoryPatternWithUOW.Core.Helpers;
 using RepositoryPatternWithUOW.Core.Models;
-using RepositoryPatternWithUOW.EF;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -22,17 +19,21 @@ namespace HRManagementSystem.Controllers
     {
         [AllowAnonymous]
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] EmployeeSigningInfoDTO dto)
+        public async Task<IActionResult> Register([FromBody] RegisterDTO dto)
         {
-            if (await unitOfWork.EmployeeSigningInfo.FindOne(e => e.Username == dto.Username) is not null)
+            if (dto is null)
+                return BadRequest("Data is required!!");
+
+            if (await unitOfWork.ApplicationUsers.FindOne(e => e.Email == dto.Email) is not null)
                 return BadRequest("The Username is already exists");
 
-            var employeeInfo = new EmployeeSigningInfo();
+            //var employeeInfo = new ApplicationUser();
 
-            employeeInfo = dto.Adapt(employeeInfo);
+            var employeeInfo = dto.Adapt<ApplicationUser>();
+
             employeeInfo.Password = BCrypt.Net.BCrypt.HashPassword(dto.Password);
 
-            await unitOfWork.EmployeeSigningInfo.Add(employeeInfo);
+            await unitOfWork.ApplicationUsers.Add(employeeInfo);
 
             unitOfWork.Complete();
 
@@ -43,29 +44,45 @@ namespace HRManagementSystem.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDTO loginDto)
         {
-            //var isVerified = BCrypt.Net.BCrypt.Verify(loginDto.Password, Employee.)
+            if(loginDto is null)
+                return Unauthorized("Credentials are required");
 
-            var employee = await unitOfWork.EmployeeSigningInfo
-                .FindOne(e => e.Email == loginDto.Email);
+            var applicationUser = await unitOfWork.ApplicationUsers
+                .FindOne(e => e.Email!.ToLower() == loginDto.Email!.ToLower());
 
-            if (employee == null || !BCrypt.Net.BCrypt.Verify(loginDto.Password, employee.Password))
+            if (applicationUser == null || !BCrypt.Net.BCrypt.Verify(loginDto.Password, applicationUser.Password))
                 return Unauthorized("Invalid Username or Password!");
+
+            var userRole = await unitOfWork.UserRoles.FindOne(x => x.ApplicationUserId == applicationUser.Id);
+
+            if (userRole is null)
+                return Unauthorized("User Role not found!");
+
+            var role = await unitOfWork.Roles.FindOne(x => x.Id == userRole.Id);
+
+            if (role is null)
+                return Unauthorized("User Role not found!");
 
             var tokenHandler = new JwtSecurityTokenHandler();
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Issuer = jwt.Issuer,
+
                 Audience = jwt.Audience,
+
                 SigningCredentials = new SigningCredentials
                     (new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt.SigningKey)), SecurityAlgorithms.HmacSha256),
+
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new(ClaimTypes.NameIdentifier, employee.Id.ToString()),
-                    new(ClaimTypes.Email, employee.Email),
-                    new(ClaimTypes.Role, "Admin"),
-                    new(ClaimTypes.Role, "User")
-                })
+                    new(ClaimTypes.NameIdentifier, applicationUser.Id.ToString()),
+                    new(ClaimTypes.Email, applicationUser.Email!),
+                    new(ClaimTypes.Name, applicationUser.FullName!),
+                    new(ClaimTypes.Role, role.Name)
+                }),
+
+                Expires = DateTime.Now.AddMinutes(30)
             };
 
             var securityToken = tokenHandler.CreateToken(tokenDescriptor);

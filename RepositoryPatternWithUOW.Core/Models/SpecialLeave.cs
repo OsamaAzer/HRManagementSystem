@@ -9,7 +9,7 @@ namespace RepositoryPatternWithUOW.Core.Models
 
         public DateOnly Date {  get; set; }
         
-        public int? EmployeeId {  get; set; }
+        public int EmployeeId {  get; set; }
         
         public virtual Employee? Employee { get; set; }
     }

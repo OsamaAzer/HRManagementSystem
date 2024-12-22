@@ -6,7 +6,6 @@ namespace RepositoryPatternWithUOW.Core.Models
     {
         public int Id { get; set; }
 
-        [EnumDataType(typeof(AttendanceStatus))]
         public AttendanceStatus Status { get; set; }
 
         public DateOnly Date { get; set; }
@@ -19,7 +18,7 @@ namespace RepositoryPatternWithUOW.Core.Models
 
         public int LateTimeHours { get; set; }
 
-        public int? EmployeeId { get; set; }
+        public int EmployeeId { get; set; }
 
         public virtual Employee? Employee { get; set; }
 

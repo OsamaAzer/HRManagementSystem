@@ -17,7 +17,9 @@ namespace RepositoryPatternWithUOW.Core
 
         public IBaseRepository<Role> Roles { get; }
 
-        public IBaseRepository<EmployeeSigningInfo> EmployeeSigningInfo { get; }
+        public IBaseRepository<UserRole> UserRoles { get; }
+
+        public IBaseRepository<ApplicationUser> ApplicationUsers { get; }
 
         int Complete();
     }

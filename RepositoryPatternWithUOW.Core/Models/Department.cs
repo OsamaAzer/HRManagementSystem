@@ -1,4 +1,6 @@
 ﻿
+using System.Text.Json.Serialization;
+
 namespace RepositoryPatternWithUOW.Core.Models
 {
     public class Department
@@ -7,6 +9,7 @@ namespace RepositoryPatternWithUOW.Core.Models
 
         public string Name { get; set; }
 
+        [JsonIgnore]
         public virtual ICollection<Employee> Employees { get; set; } = new List<Employee>();
     }
 }

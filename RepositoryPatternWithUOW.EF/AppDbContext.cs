@@ -4,9 +4,9 @@ using RepositoryPatternWithUOW.Core.Models;
 
 namespace RepositoryPatternWithUOW.EF
 {
-    public class AppDbContext : DbContext
+    public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
     {
-        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
+        //public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
         
         public DbSet<Department> Departments { get; set; }
 
@@ -20,7 +20,9 @@ namespace RepositoryPatternWithUOW.EF
 
         public DbSet<Role> Roles { get; set; }
 
-        public DbSet<EmployeeSigningInfo> EmployeeSigningInfos { get; set; }
+        public DbSet<UserRole> UserRoles { get; set; }   
+
+        public DbSet<ApplicationUser> ApplicationUsers { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -40,6 +42,9 @@ namespace RepositoryPatternWithUOW.EF
                     v => v.ToString(), // Enum to string for database storage
                     v => (AttendanceStatus)Enum.Parse(typeof(AttendanceStatus), v) // String to enum for entity
                 );
+
+            
+
         }
     }
 }

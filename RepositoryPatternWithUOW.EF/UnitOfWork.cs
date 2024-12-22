@@ -20,7 +20,9 @@ namespace RepositoryPatternWithUOW.EF
 
         public IBaseRepository<Role> Roles { get; private set; } = new BaseRepository<Role>(context);
 
-        public IBaseRepository<EmployeeSigningInfo> EmployeeSigningInfo { get; private set;} = new BaseRepository<EmployeeSigningInfo>(context);
+        public IBaseRepository<UserRole> UserRoles { get; private set; } = new BaseRepository<UserRole>(context);
+
+        public IBaseRepository<ApplicationUser> ApplicationUsers { get; private set;} = new BaseRepository<ApplicationUser>(context);
 
         public int Complete()
         {
